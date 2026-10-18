@@ -34,4 +34,4 @@ data[0x0172] = 0x01                        # Flag Byte
 with open("oem_fixed.img", "wb") as f:
     f.write(data)
 
-print("oem_fixed.img regenerated with realistic MACs!")
+print("oem_fixed.img generated")
