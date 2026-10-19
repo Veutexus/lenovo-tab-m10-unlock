@@ -86,7 +86,7 @@ With the bootloader unlocked, you now have full control over your device. To gai
 
 # Custom recovery
 
-Not tested: https://xdaforums.com/t/recovery-tb128fu-unofficial-twrp-3-7-x-for-lenovo-tab-m10-plus-gen-3-sdm680.4538035/
+Tested: https://xdaforums.com/t/recovery-tb128fu-unofficial-twrp-3-7-x-for-lenovo-tab-m10-plus-gen-3-sdm680.4538035/
 
 *Unfinished*
 
