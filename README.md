@@ -15,7 +15,7 @@ This is a fairly easy alternative method for unlocking the bootloader compared t
 - CN ROM `TB128FU_CN_OPEN_USER_Q00012.0_S_ZUI_14.0.714` (Not necessarily this one, but the one I used)
 - ADB and fastboot tools, drivers
 - QFIL (Qualcomm Flash Image Loader) and Qualcomm USB drivers installed
-- Rescue and Smart Assistant (RSA)
+- Rescue and Smart Assistant (RSA) (Optional)
 
 Please download them yourself; this guide will not provide links to these tools.
 
@@ -95,7 +95,7 @@ Not tested: https://xdaforums.com/t/recovery-tb128fu-unofficial-twrp-3-7-x-for-l
 > [!WARNING]
 > **Important Warning:** This manual reconstruction method should be used as a **last resort**. Manual editing can only generates placeholder network parameters and basic flag entries. Before attempting this, always try Lenovo's official recovery software first, or flash an exact 1:1 partition backup dumped from a working unit of the same model.
 
-Using QFIL with **"Erase All Before Download"** WILL wipes critical low-level partitions, stripping out hardware identifiers (Serial Number, MAC addresses, region codes) and causing **Settings** and **Developer Options** to crash.
+Using QFIL with **"Erase All Before Download"** wipes critical low-level partitions, stripping out hardware identifiers (Serial Number, MAC addresses, region codes) and causing **Settings** and **Developer Options** to crash.
 
 This guide covers how to restore the device if official tools cannot recover the hardware identity parameters.
 
@@ -133,7 +133,7 @@ Because a wiped `oem` partition is filled with zeroes, you must inject your hard
 | `0x0152` | Region Code | 4 ASCII chars | `HKXX` (or `ROW`, `GBXX`) |
 | `0x0172`| Flag Byte | `0x01` byte value | |
 
-Use the script located in the [/Scripts/] folder to automatically create one *(Credit to the community for finding the layout structure)*
+Use the script located in the [Scripts/](Script/) folder to automatically create one *(Credit to the community for finding the layout structure)*
 
 ---
 
