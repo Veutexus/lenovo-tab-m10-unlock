@@ -14,7 +14,7 @@ This is a fairly easy alternative method for unlocking the bootloader compared t
 ## Prerequisites
 - CN ROM `TB128FU_CN_OPEN_USER_Q00012.0_S_ZUI_14.0.714` (Not necessarily this one, but the one I used)
 - ADB and fastboot tools, drivers
-- QFIL (Qualcomm Flash Image Loader)
+- QFIL (Qualcomm Flash Image Loader) and Qualcomm USB drivers installed
 - Rescue and Smart Assistant (RSA)
 
 Please download them yourself; this guide will not provide links to these tools.
@@ -50,6 +50,8 @@ This should output an 8-digit code (in this case, 69acbd04). Note it down.
 > [!NOTE]
 > Normally, you would input this code directly into the ZUI unlock site, but don't waste time doing that. You would need an accessible Chinese email address, and most of the time the email containing the `sn.img` file is never delivered.
 
+---
+
 3. After that, insert the returned 8-digit identifier into the following URL parameter to download your unique unlock token, or use the one I provided if you are using the ROM above.
 ```
 http://cdn.zui.lenovomm.com/developer/tabletboot/[unlock_id]/sn.img
@@ -58,13 +60,17 @@ In this case:
 http://cdn.zui.lenovomm.com/developer/tabletboot/69acbd04/sn.img
 ```
 
+---
+
 4. Flash the downloaded sn.img file and complete the bootloader unlock.
 ```bash
 fastboot flash unlock sn.img
 fastboot oem unlock-go
 ```
 It should look like this if successful.
-<img width="806" height="87" alt="image" src="https://github.com/user-attachments/assets/2a233768-3333-418f-978c-3623d9f77f3a" />
+<img width="806" height="87" alt="image" src="https://github.com/user-attachments/assets/2a233768-3333-418f-978c-3623d9f77f3a"/>
+
+---
 
 5. You are almost there. The system will not boot and will display as corrupted because the device cannot boot a mismatched CN ROM. You can either reflash a ROW ABL using QFIL or simply use Lenovo RSA to rescue the device and revert to the global ROM.
 6. Congrats, you have successfully unlocked the bootloader!
@@ -74,7 +80,13 @@ With the bootloader unlocked, you now have full control over your device. To gai
 
 *Unfinished*
 
-# Flash GSI/Custom rom
+# Flash GSI/custom rom
+
+*Unfinished*
+
+# Custom recovery
+
+Not tested: https://xdaforums.com/t/recovery-tb128fu-unofficial-twrp-3-7-x-for-lenovo-tab-m10-plus-gen-3-sdm680.4538035/
 
 *Unfinished*
 
@@ -90,25 +102,25 @@ This guide covers how to restore the device if official tools cannot recover the
 ---
 
 ## Prerequisites
-* A Windows PC with **Qualcomm QFIL** and Qualcomm USB drivers installed.
-* Your device's **Serial Number** (e.g., `HA1MW91Y`).
-* A clean `persist.img` dump for the **TB128FU**.
-* **Python** installed on your PC or somewhere you can run the program.
+- Your device's **Serial Number** (e.g., `HA1MW91Y`).
+- A clean `persist.img` dump for the **TB128FU**.
+- Python installed on your PC or somewhere you can run the program.
 
 ---
 
 ## Step 1: Try official Lenovo software recovery
 Before manually editing binary files, attempt to recover your tablet using official software:
 
-1. Download and install **Rescue and Smart Assistant (RSA)** (Lenovo's official repair software) on your PC.
+1. Download and install RSA (Lenovo's official repair software) on your PC.
 2. Connect your device and select **Rescue Mode**.
 3. Follow the on-screen instructions to automatically download and reflash official firmware for the TB128FU.
 
-RSA is unlikely to help you recover deleted critical low-level partitions.
+>[!NOTE]
+> RSA is unlikely to recover deleted critical low-level partitions.
 
 ---
 
-## Step 2: Generate `oem_fixed.img`
+## Step 2: Generate new image
 Because a wiped `oem` partition is filled with zeroes, you must inject your hardware data at correct binary offsets.
 
 ### OEM Offset Map
