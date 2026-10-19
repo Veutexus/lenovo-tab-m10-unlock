@@ -7,22 +7,72 @@ A comprehensive guide to unlock the bootloader of **Lenovo Tab M10 Plus (3rd Gen
 # Background
 Lenovo decided to screw over it's global customers by completely removing the official bootloader unlocking mechanism for the global version of TB128FU. Fastboot unlock commands are ignored by the bootloader, making the official unlock method by flashing `sn.img` useless. But the chinese equivalent of this pad, Xiaoxin pad 2022 understands all fastboot commands as it should. This guide was created to provide a working workaround to bypass Lenovo’s restrictions and regain full control over your hardware.
 
-# Prerequisite
-- A computer
-- ADB and fastboot tools, drivers
-- QFIL (Qualcomm Flash Image Loader)
-- Lenovo RSA (Software Fix)
-
-Please search them up yourself, this guide will not provide any links or supports to these software.
+This is an alternative and easier method to unlock bootloader compared to the HxD method. https://xdaforums.com/t/unlock-bootloader-without-proper-unlock-file-xiaoxin-pad-pro-2021-tb-j716f.4488343/
 
 # Unlocking the bootloader
 
-Pending
+## Prerequisite
+- CN Rom `TB128FU_CN_OPEN_USER_Q00012.0_S_ZUI_14.0.714` (May not be specifally to this one, but the one I used)
+- ADB and fastboot tools, drivers
+- QFIL (Qualcomm Flash Image Loader)
+- Rescue and Smart Assistant (RSA)
+
+Please search them up yourself, this guide will not provide any links or supports to these software.
+
+## Method Overview
+
+This unlocking procedure works by replacing the restricted global (ROW) Android Bootloader (ABL) with a firmware build from the Chinese (CN) region that retains functional unlock parameters.
+
+### Technical Workflow
+
+1. Flash the official CN firmware build `TB128FU_CN_OPEN_USER_Q00012.0_S_ZUI_14.0.714` using QFIL in EDL mode.
+2. Reboot the device into fastboot mode.
+3. Retrieve the required ZUI unlock identifier using fastboot commands.
+4. Download the generated bootloader key (`sn.img`) from Lenovo's CDN server.
+5. Flash the unlock key and execute the OEM unlock command.
+
+> [!NOTE]
+> The standard 8-digit hardware serial number printed on the device or shown in global settings will not work to generate a valid unlock file. On ROW ABL, running `fastboot getvar unlock_id` returns `GetVar Variable Not found`. The China ABL generates a distinct 8-digit
+> unlock identifier string required specifically by Lenovo's ZUI token service. This code can only be generated and retrieved once the tablet is running the China bootloader.
+
+### Steps
+1. Once booted into fastboot mode on the CN firmware, retrieve your device-specific unlock identifier:
+```bash
+fastboot getvar unlock_id
+```
+
+This should split out a 8-digit code, in this case it is `69acbd04`, note it down.
+
+> [!NOTE]
+> Normally, you put this code directly in zui unlock site, but don't waste time doing that as you need a reachable Chinese email and most of the time you will not receive the email for the `sn.img`.
+
+2. After that, insert the returned 8-digit identifier into the following URL parameter to download your unique unlock token:
+```
+http://cdn.zui.lenovomm.com/developer/tabletboot/[unlock_id]/sn.img
+
+In this case:
+http://cdn.zui.lenovomm.com/developer/tabletboot/69acbd04/sn.img
+```
+
+3. Flash the downloaded sn.img file and complete the bootloader unlock.
+```bash
+fastboot flash unlock sn.img
+fastboot oem unlock-go
+```
+It should look like this if successful.
+<img width="806" height="87" alt="image" src="https://github.com/user-attachments/assets/2a233768-3333-418f-978c-3623d9f77f3a" />
+
+4. You are almost there. Now the system won't boot and shown as corrupted, because the device won't recognize a mismatched CN rom, you can either reflash a ROW ABL using QFIL or just use the Lenovo RSA to rescue and revert to global ROM.
+5. Congrats, you have succesfully unlocked the bootloader!
 
 # Rooting
+With the bootloader unlcoked, you now have full control of your device. To gain root, simply extract `boot.img` from stock firmware or directly from device, patch it via Magisk/KernelSU or any other root manager, please follow their respective guides.
+
+*Unfinished*
 
 # Flash GSI/Custom rom
 
+*Unfinished*
 
 # Recovering wiped oem partition
 
@@ -43,7 +93,7 @@ This guide covers how to restore the device if official tools cannot recover the
 
 ---
 
-## Step 1: Try Official Lenovo Software Recovery
+## Step 1: Try official Lenovo software recovery
 Before manually editing binary files, attempt to recover your tablet using official software:
 
 1. Download and install **Rescue and Smart Assistant (RSA)** (Lenovo's official repair software) on your PC.
