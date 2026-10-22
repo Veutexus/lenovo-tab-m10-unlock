@@ -12,21 +12,12 @@ Lenovo decided to screw over it's global customers by completely removing the of
 
 This is a fairly easy alternative method for unlocking the bootloader compared to the [hex edit method](https://xdaforums.com/t/unlock-bootloader-without-proper-unlock-file-xiaoxin-pad-pro-2021-tb-j716f.4488343/), which is considerably harder. ([4PDA thread](https://4pda.to/forum/index.php?showtopic=1047797&st=660#entry116826199))
 
-# Repository contents
 
-Not everything in this repository is required to unlock the tablet. Read the warnings before flashing anything.
-
-| Path | What it is | Warning / status |
-| :--- | :--- | :--- |
-| `README.md` | This guide. | Rooting, GSI and custom recovery sections are unfinished. |
-| `abl.elf` | Qualcomm ABL bootloader image (ELF32 ARM, Lenovo-signed). | Not referenced by the steps below, and its exact model/firmware build is not documented. Do not flash it unless you have verified it against a known-good dump. |
-| `sn.img` | ZUI unlock token containing `unlock_id` `69acbd04`. | Device-specific. It is only useful for the author's device; generate your own token. |
-| `Scripts/restore_oem.py` | Generates a 1 MB `oem_fixed.img` with hard-coded identity values. | The serial number is hard-coded to an example value and the MAC addresses are placeholders. Edit them before running. |
-| `Scripts/restore_oem_advanced.py` | Same as above, but generates random MAC addresses. | Still hard-codes the serial number. Prefer the MACs printed on your device label. |
-| `Modules/default-screen-rotation/` and `.zip` | Optional Magisk module that sets `ro.sf.hwrotation=90`. | Not required for unlocking. Its module id is still `disable-hw-overlays`, which may conflict with other modules; test it before relying on it. |
-| `Modules/Grass-perf@0910-102621.zip` | AnyKernel3 kernel package. | **Do not flash on TB128FU.** Its `version` file identifies it as a Samsung Galaxy A51 (A515F, Exynos 9611) kernel, not a Snapdragon 680 kernel. `do.devicecheck=0` means it will not check the device. |
 
 # Unlocking the bootloader
+
+>[!WARNING]
+>Not everything in this repository is required to unlock the tablet. Read the instructions before flashing anything.
 
 ## Prerequisites
 - CN ROM `TB128FU_CN_OPEN_USER_Q00012.0_S_ZUI_14.0.714` (Not necessarily this one, but the one I used)
