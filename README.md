@@ -5,14 +5,12 @@ A comprehensive guide to unlock the bootloader of **Lenovo Tab M10 Plus (3rd Gen
 > This guide is a work in progress.
 
 # Disclaimer
-**Unlocking your bootloader and flashing custom software carries inherent risks, including permanent device damage (bricking), total data loss, voided warranties, and compromised security or app compatibility. This guide assumes you possess the necessary technical knowledge, common sense, and understanding to carry out low-level system modifications independently. By following these steps, you acknowledge that you are doing so entirely at your own risk; I assume no responsibility or liability under any circumstances for any loss, damage, hardware failure, or operational issues that may occur to your device or data.**
+**Unlocking your bootloader and flashing custom software carries inherent risks, including permanent device damage (bricking), total data loss, voided warranties, and compromised security or app compatibility. This guide assumes you possess the necessary technical knowledge, common sense, and understanding to carry out low-level system modifications independently. By following these steps, you acknowledge that you are doing so entirely at your own risk. I assume no responsibility or liability under any circumstances for any loss, damage, hardware failure, or operational issues that may occur to your device or data.**
 
 # Background
 Lenovo decided to screw over it's global customers by completely removing the official bootloader unlocking mechanism for the global version of TB128FU. Fastboot unlock commands are ignored by the bootloader, making the official unlock method by flashing `sn.img` useless. But the chinese equivalent of this pad, Xiaoxin pad 2022 understands all fastboot commands as it should. This guide was created to provide a working workaround to bypass Lenovo’s restrictions and regain full control over your hardware.
 
-This is a fairly easy alternative method for unlocking the bootloader compared to the [hex edit method](https://xdaforums.com/t/unlock-bootloader-without-proper-unlock-file-xiaoxin-pad-pro-2021-tb-j716f.4488343/), which is considerably harder. ([4PDA thread](https://4pda.to/forum/index.php?showtopic=1047797&st=660#entry116826199))
-
-
+This is a fairly easy alternative method for unlocking the bootloader compared to the [hex edit method](https://xdaforums.com/t/unlock-bootloader-without-proper-unlock-file-xiaoxin-pad-pro-2021-tb-j716f.4488343/), which is considerably harder. ([4PDA forum](https://4pda.to/forum/index.php?showtopic=1047797&st=660#entry116826199))
 
 # Unlocking the bootloader
 
@@ -25,7 +23,7 @@ This is a fairly easy alternative method for unlocking the bootloader compared t
 - QFIL (Qualcomm Flash Image Loader) and Qualcomm USB drivers installed
 - Rescue and Smart Assistant (RSA) (Optional)
 
-Please download them yourself; this guide will not provide links to these tools.
+Please download them yourself, this guide will not provide links to these tools.
 
 ## Method overview
 
@@ -50,11 +48,11 @@ This unlocking procedure works by replacing the restricted global (ROW) Android 
 
 #### Step 1: Flash the CN firmware with QFIL (EDL mode)
 
-1. Enable **OEM unlocking** in Developer options, then power the tablet off completely. Remove any screen lock, Google account and device protection first; a locked FRP account can block the first boot after flashing.
+1. Enable **OEM unlocking** in Developer options, then power the tablet off completely. Remove any screen lock, Google account and device protection first. A locked FRP account can block the first boot after flashing.
 2. Download and extract the CN ROM package (`TB128FU_CN_OPEN_USER_Q00012.0_S_ZUI_14.0.714`). The extracted folder should contain the firehose programmer (often `prog_firehose_ddr.elf`), the partition XML files (`rawprogram*.xml`, `patch*.xml`) and the image files.
 3. Install **QFIL** and the **Qualcomm USB drivers** on your PC.
-4. With the tablet powered off and **not** connected to USB, hold **Volume Up** and plug in the USB cable. Keep holding Volume Up until Windows **Device Manager** shows **Qualcomm HS-USB QDLoader 9008 (COMx)** under *Ports (COM & LPT)*. That is EDL mode; release the button.
-   - If Windows shows an unknown device or a yellow warning icon, install the Qualcomm USB driver. On units where the Volume Up combination does not work, use the EDL test point while connecting USB.
+4. With the tablet powered off and not connected to USB, hold Volume Up and plug in the USB cable. Keep holding Volume Up until Windows **Device Manager** shows **Qualcomm HS-USB QDLoader 9008 (COMx)** under *Ports (COM & LPT)*.
+   - If Windows shows an unknown device or a yellow warning icon, reinstall or find the correct Qualcomm USB driver. On units where the Volume Up combination does not work, use the EDL test point while connecting USB.
 5. Open **QFIL**. Select Port and choose the `9008` COM port.
 6. Select **Flat Build**.
 7. In **Programmer Path**, browse to the firehose programmer from the extracted firmware. The filename varies by package, use the one that came with the ROM.
@@ -63,7 +61,7 @@ This unlocking procedure works by replacing the restricted global (ROW) Android 
 10. Wait for the download to finish. Do not boot into the CN firmware.
 
 > [!NOTE]
-> Flashing the CN ROM only gives you the CN ABL; it does not unlock the bootloader. The tablet is still locked at this point.
+> Flashing the CN ROM only gives you the CN ABL, it does not unlock the bootloader. The tablet is still locked at this point.
 
 #### Step 2: Boot into fastboot
 
@@ -95,7 +93,7 @@ This should output an 8-digit code (in this case, `69acbd04`). Note it down.
 
 Insert the returned 8-digit identifier into the following URL parameter to download your unique unlock token. Do not reuse the `sn.img` bundled in this repository unless your `unlock_id` is also `69acbd04`; the token is tied to the device that generated it.
 ```
-http://cdn.zui.lenovomm.com/developer/tabletboot/[unlock_id]/sn.img
+http://cdn.zui.lenovomm.com/developer/tabletboot/<unlock_id>/sn.img
 ```
 
 For example, for `unlock_id` `69acbd04`:
@@ -125,23 +123,20 @@ It should look like this if successful.
 
 #### Step 6: Restore the ROW firmware
 
-The system will not boot and will display a "device is corrupt" or "Can't load Android system" warning after the unlock because the device can no longer boot the mismatched CN firmware. This is expected; the unlock itself has already succeeded.
+The system will not boot and will display a "device is corrupt" or "hardware not supported" warning after the unlock because the device is unable to boot the mismatched CN firmware. This is expected but the unlock itself has already succeeded.
 
-- **Recommended:** use Lenovo **RSA** in Rescue Mode to download and flash the global (ROW) firmware for the TB128FU. RSA handles the full partition set for you.
-- **Alternative:** flash the full ROW firmware with QFIL using the same EDL procedure as Step 1, but with the ROW package. A verified ROW `abl` image can also be restored through QFIL Partition Manager, but a full ROW firmware flash is safer.
+- **Recommended:** Use Lenovo **RSA** in Rescue Mode to download and flash the global (ROW) firmware for the TB128FU. RSA handles the full partition set for you.
+- **Alternative:** Flash the full ROW firmware with QFIL using the same EDL procedure as Step 1, but with the ROW package. This method is harder as ROW firmware uses `.x` file format and is encrypted.
 
 #### Step 7: Done
 
 Congrats, you have successfully unlocked the bootloader!
 
 > [!WARNING]
-> Do not relock the bootloader (`fastboot oem lock` / `fastboot flashing lock`) while the device is running mismatched firmware. Relocking can brick the tablet and is not required for normal use. Keep it unlocked unless you have fully restored a matching stock firmware and know exactly what you are doing.
-
-> [!NOTE]
-> An unlocked bootloader can affect OTA updates, Widevine L1 playback and some banking/DRM apps. These are normal trade-offs of unlocking, not bugs in this guide.
+> Do not relock the bootloader while the device is running mismatched firmware, it can brick the tablet. Keep it unlocked unless you have fully restored a matching stock firmware and know exactly what you are doing.
 
 # Rooting
-With the bootloader unlocked, you now have full control over your device. To gain root access, simply extract boot images from the stock firmware or directly from the device, patch it using Magisk, KernelSU, or another root manager, and flash it following their respective guides.
+With the bootloader unlocked, you now have full control over your device. To gain root access, simply extract boot image from the stock firmware or directly from the device, patch it using Magisk, KernelSU, or another root manager, and flash it following their respective guides.
 
 *Unfinished*
 
@@ -212,7 +207,7 @@ Use the scripts located in the [Scripts/](Scripts/) folder to automatically crea
 > [!NOTE]
 > Avoid using `fastboot` to flash `oem`, as it may fail due to dynamic partition restrictions.
 
-1. Power off the tablet and boot into **EDL Mode (Qualcomm 9008)** (`Vol Up` or EDL test point while plugging in the USB cable)
+1. Power off the tablet and boot into **EDL Mode (Qualcomm 9008)** (Volume Up or EDL test point while plugging in the USB cable)
 2. Open QFIL and select Tools > Partition Manager
 3. Right-click `oem` > Manage Partition > Load Image > Select `oem_fixed.img`
 4. Right-click `persist` > Manage Partition > Load Image > Select clean `persist.img`
@@ -221,12 +216,12 @@ Use the scripts located in the [Scripts/](Scripts/) folder to automatically crea
 ---
 
 ## Step 4: Factory Reset
-1. Boot into stock **Recovery Mode**
-2. Select **Wipe Data / Factory Reset**
-3. Reboot into system
+1. Boot into Recovery.
+2. Wipe Data / Factory Reset.
+3. Reboot into system.
 
 ---
 
 ## Verification
-* Go to Settings > About Tablet to verify your serial number and MAC addresses appear correctly
-* Open Developer Options to confirm it launches without crashing
+- Go to Settings > About Tablet to verify your serial number and MAC addresses appear correctly.
+- Open Developer Options to confirm it launches without crashing.
